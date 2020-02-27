@@ -2,7 +2,7 @@ exports.up = function(knex) {
   return knex.schema
     .createTable("places", tbl => {
       tbl.increments();
-      tbl.text("city", 128);
+      tbl.text("city", 128).notNullable();
       tbl.text("country", 128).notNullable();
       tbl
         .integer("user_id")
@@ -22,8 +22,10 @@ exports.up = function(knex) {
         .notNullable()
         .unsigned()
         .references("id")
-        .inTable("places");
-      onUpdate("CASCADE").onDelete("CASCADE");
+        .inTable("places")
+      .onUpdate("CASCADE")
+      .onDelete("CASCADE");
+      
       tbl.text("story_photo_url");
       tbl.string("review").notNullable();
       tbl
@@ -40,5 +42,5 @@ exports.up = function(knex) {
 exports.down = function(knex) {
   return knex.schema
     .dropTableIfExists("stories")
-    .dropTableIfExists("restaurants");
+    .dropTableIfExists("places");
 };
