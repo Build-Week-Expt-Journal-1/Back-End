@@ -1,66 +1,176 @@
-const db = require('./placeModel');
-const Users = require('../users/userModel');
+const db = require("./placeModel");
+const Users = require("../users/userModel");
 
-const auth = require('../../auth-middleware');
+const auth = require("../../auth-middleware");
 
 const router = require("express").Router();
 
-router.get('/',auth, (req,res)=> {
-    const id = req.header.user_id;
+//This one gets ALL the Places.
+router.get("/all", auth, (req, res) => {
+  const id = req.header.user_id;
+  // const { id } = req.params;
 
-    db.getAllPlaces( )
-    .then(place=> {
-        res.status(200).json(place)
+  db.getAllPlaces()
+    .then(place => {
+      res.status(200).json(place);
     })
-    .catch(err=> {
-        res.status(500).json({message: 'error retrieving the places'})
-    })
-})
-
-router.post('/', (req,res)=> {
-    const creds = req.body;
-
-    db.addPlace(creds)
-
-    .then(place=> {
-        res.status(201).json(place[0])
-    })
-    .catch(err=> {
-        res.status(500).json({message: 'Error adding the place to database'})
-    })
-
+    .catch(err => {
+      res.status(500).json({ message: "error retrieving the places" });
+    });
 });
 
-// router.get('/:id', (req,res)=> {
-//     const id = req.params.id;
-//   const user_id = req.headers.user_id;
+// This One gets by the userID.
 
-//   db.getPlace(id)
-//   .then(place => {
-//       place
-//       ? res.status(200).json(place)
-//       : res.status(404).json({message: 'Cannot find that place.'})
-//   })
-//   .catch(err=> {
-//       res.status(500).json({message: "Error retreiving the Place."})
-//   })
-// })
+router.get("/", auth, (req, res) => {
+  const Uid = req.headers.user_id;
+  const id = req.params.id;
 
-router.get('/:id', (req,res)=> {
-        const id = req.params.id;
-
-    db.findById(id)
-    .then(place=> {
-        if (place){
-        res.status(200).json(place)
-    }else{
-        res.status(404).json({message: "could not find the place."})
-    }
+  db.findPlaces(Uid)
+    .then(place => {
+      res.status(200).json(place);
     })
-    .catch(err=> ({message: 'Error finding the Place.'}))
-})
 
+    .catch(err => {
+      res.status(500).json({ message: "Error getting the Place." });
+    });
+});
 
+router.post("/", (req, res) => {
+  const creds = req.body;
 
+  db.addPlace(creds)
+
+    .then(place => {
+      res.status(201).json(place[0]);
+    })
+    .catch(err => {
+      res.status(500).json({ message: "Error adding the place to database" });
+    });
+});
+
+ 
+
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.findById(id)
+    .then(place => {
+      if (place) {
+        res.status(200).json(place);
+      } else {
+        res.status(404).json({ message: "could not find the place." });
+      }
+    })
+    .catch(err => ({ message: "Error finding the Place." }));
+});
+
+router.post("/:id/stories", (req, res) => {
+  const storyData = req.body;
+  const { id } = req.params;
+  //   const { placeId } = req.place_id;
+
+  db.findById(id)
+    .then(place => {
+      if (place) {
+        db.addStory(storyData, id).then(story => {
+          res.status(201).json(story);
+        });
+      } else {
+        res
+          .status(404)
+          .json({ message: "Could not find the place with given id." });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ message: "Error adding the Story." });
+    });
+});
+
+router.get("/:id/stories", (req, res) => {
+  const { id } = req.params;
+  console.log("THIS ONE??", req.headers.place_id, req.params);
+  db.getStories(id)
+    .then(stories => {
+      if (stories.length) {
+        res.json(stories);
+      } else {
+        res
+          .status(404)
+          .json({ message: "Could not find stories for given place." });
+      }
+    })
+    .catch(err => {
+      res.status(500).json("Error getting the Stories, Sucka");
+    });
+});
+
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+  db.findById(id)
+    .then(place => {
+      if (place) {
+        db.update(changes, id).then(update => {
+          res.json(update);
+        });
+      } else {
+        res.status(404).json({ message: "Could not find" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ message: "Failed to update" });
+    });
+});
+
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  console.log("DELETE", id);
+  db.remove(id)
+    .then(count => {
+      if (count) {
+        res.json({ removed: count });
+      } else {
+        res.status(404).json({ message: "Could not find place with given id" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ message: "Failed to delete user" });
+    });
+});
+
+router.put("/:id/stories/:id", (req, res) => {
+  const { id } = req.params;
+  const info = req.body;
+  const user_id = req.headers.user_id;
+
+  db.findStoryById(id)
+    .then(story => {
+      if (story) {
+        db.updateStory(id, info, user_id).then(update => {
+          res.status(200).json(update);
+        });
+      } else {
+        res.status(404).json({ message: "Could not find" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ message: "Could not update story." });
+    });
+});
+
+router.delete("/:id/stories/:id", (req, res) => {
+  const { id } = req.params;
+   db.removeStory(id)
+    .then(count => {
+      if (count) {
+        res.json({ removed: count });
+      } else {
+        res.status(404).json({ message: "Could not find place with given id" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ message: "Failed to delete story" });
+    });
+});
 
 module.exports = router;

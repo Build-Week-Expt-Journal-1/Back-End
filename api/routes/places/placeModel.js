@@ -1,22 +1,20 @@
 const db = require('../../../database/dbConfig');
-
+ 
 function addPlace (place){
     return db('places')
     .insert(place);
 }
 
-
-async function getPlace(id ){
-    const place = await db('places')
-    .where('user_id', id)
-    // .andWhere('user_id', user_id)
-    first();
-
-
-}
+ 
 function findById(id) {
     return db('places')
       .where({ id })
+      .first();
+  }
+
+  function findStoryById(id){
+      return db('stories')
+      .where({id})
       .first();
   }
 
@@ -24,6 +22,12 @@ function getAllPlaces (  ){
     return db('places') 
  }
 
+  function findPlaces(id){
+      return db('places as p')
+      .join('users as u','u.id','p.user_id')
+      .select('p.city', 'p.country','u.username','u.id','p.id')
+      .where({user_id:id})
+  }
 
 function updatePlace(id, obj, user_id) {
     return db("places")
@@ -32,20 +36,57 @@ function updatePlace(id, obj, user_id) {
       .update(obj)
       .returning(["id", ...Object.keys(obj)]);
   }
-  
-  function delPlace(id, user_id) {
-    return db("places")
+
+   async function update(changes, id){
+      await db('places')
+      .where({id})
+      .update(changes);
+  }
+
+  function updateStory(id, info, user_id){
+     return db ('stories')
       .where("id", id)
-      .andWhere("user_id", user_id)
-      .del();
+      .andWhere('user_id', user_id)
+      .update(info)
+      .returning(["id", ...Object.keys(info)]);
+
+  }
+  
+  function remove(id){
+      return db('places').where({id}).del();
+  }
+
+  function removeStory(id){
+      return db('stories').where({id}).del();
+  }
+   
+
+  function getStories(id){
+      return db('stories as s')
+       .join('places as p'  ,'p.id','s.place_id')
+    //    .join('users as u')
+       .select('p.city','p.country','s.review')
+       .where({place_id:id})
+      
+  }
+
+  async function addStory(story, place_id){
+      await db('stories').insert(story, place_id)
   }
 
 
   module.exports = {
       addPlace,
        getAllPlaces,
-       getPlace,
+        updatePlace,
+        findById,
+       findPlaces,
+       getStories,
+       addStory,
+       update,
        updatePlace,
-       delPlace,
-       findById
+       updateStory,
+       findStoryById,
+       remove,
+       removeStory
   }
