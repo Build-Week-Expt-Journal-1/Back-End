@@ -43,14 +43,20 @@ function updatePlace(id, obj, user_id) {
       .update(changes);
   }
 
-  function updateStory(id, info, user_id){
-     return db ('stories')
-      .where("id", id)
-      .andWhere('user_id', user_id)
-      .update(info)
-      .returning(["id", ...Object.keys(info)]);
-
+   async function updateStory(changes, id){
+      await db('stories')
+      .where({id})
+      .update(changes)
   }
+
+//   function updateStory(id, info, user_id){
+//      return db ('stories')
+//       .where("id", id)
+//       .andWhere('user_id', user_id)
+//       .update(info)
+//       .returning(["id", ...Object.keys(info)]);
+
+//   }
   
   function remove(id){
       return db('places').where({id}).del();
@@ -65,7 +71,7 @@ function updatePlace(id, obj, user_id) {
       return db('stories as s')
        .join('places as p'  ,'p.id','s.place_id')
     //    .join('users as u')
-       .select('p.city','p.country','s.review')
+       .select('p.city','p.country','s.review','s.id')
        .where({place_id:id})
       
   }
