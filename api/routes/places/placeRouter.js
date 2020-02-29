@@ -138,20 +138,20 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-// router.get('/:id/stories/:id',(req,res)=> {
-//   const {id}= req.params;
-//   db.findStoryById(id)
-//   .then(story=> {
-//     if(story){
-//       res.status(200).json(story)
-//     }else{
-//       res.status(404).json({message: 'Could not find story with that ID'})
-//     }
-//   })
-//   .catch(err => {
-//     res.status(500).json({message: 'error retreiving the story.'})
-//   })
-// })
+router.get('/:id/stories/:id',(req,res)=> {
+  const {id}= req.params;
+  db.findStoryById(id)
+  .then(story=> {
+    if(story){
+      res.status(200).json(story)
+    }else{
+      res.status(404).json({message: 'Could not find story with that ID'})
+    }
+  })
+  .catch(err => {
+    res.status(500).json({message: 'error retreiving the story.'})
+  })
+})
  
 router.put("/:id/stories/:id", (req, res) => {
   const { id } = req.params;
