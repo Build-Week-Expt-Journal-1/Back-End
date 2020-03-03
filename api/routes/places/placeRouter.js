@@ -6,7 +6,7 @@ const auth = require("../../auth-middleware");
 const router = require("express").Router();
 
 //This one gets ALL the Places.
-router.get("/all", auth, (req, res) => {
+router.get("/all",   (req, res) => {
   const id = req.header.user_id;
   // const { id } = req.params;
 
