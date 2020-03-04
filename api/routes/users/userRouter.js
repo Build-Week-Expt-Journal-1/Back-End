@@ -8,7 +8,7 @@ const router = require("express").Router();
 
  
 
-router.post('/register',(req,res)=> {
+router.post('/register',dupeUsernameCheck,(req,res)=> {
     let user = req.body;
     const hash = bcrypt.hashSync(user.password, 10)
     user.password = hash;
@@ -60,6 +60,24 @@ router.post("/login", (req, res) => {
     const token = jwt.sign(payload, secrets.jwtSecret, options);
   
     return token;
+  }
+
+
+  function dupeUsernameCheck(req, res, next) {
+    const { username } = req.body;
+    db.findBy({ username })
+      .then(user => {
+        if (user) {
+          res.status(409).json({ message: "Username already in use" });
+        } else {
+          next();
+        }
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ message: "Error checking for duplicate username" });
+      });
   }
   
   module.exports = router;
