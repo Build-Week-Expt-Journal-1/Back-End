@@ -33,7 +33,7 @@ router.post("/login", (req, res) => {
           const token = genToken(user);
   
           res.status(200).json({
-            message: `Welcome ${user.username}! ${user.user_id}`,
+            message: `Welcome ${user.username}! ${user.id}`,
             token: token
           });
         } else {
