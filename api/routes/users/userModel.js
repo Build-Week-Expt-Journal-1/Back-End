@@ -5,6 +5,10 @@ function addUser(user){
   .insert(user);
 }
 
+function getUsers(){
+  return db('users')
+}
+
 function findBy(filter) {
     return db('users').where(filter);
   }
@@ -13,5 +17,6 @@ function findBy(filter) {
 
 module.exports= {
     addUser,
-    findBy
+    findBy,
+    getUsers
  }

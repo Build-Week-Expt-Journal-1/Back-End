@@ -18,6 +18,9 @@ function findById(id) {
       .first();
   }
 
+
+   
+
 function getAllPlaces (  ){
     return db('places') 
  }
@@ -76,8 +79,8 @@ function updatePlace(id, obj, user_id) {
       
   }
 
-  async function addStory(story, place_id,user_id){
-      await db('stories').insert(story, place_id,user_id)
+  async function addStory(story, place_id){
+      await db('stories').insert(story, place_id)
   }
 
 

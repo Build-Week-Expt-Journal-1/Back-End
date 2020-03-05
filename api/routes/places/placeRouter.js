@@ -67,14 +67,14 @@ router.get("/:id", (req, res) => {
 router.post("/:id/stories", (req, res) => {
   const storyData = req.body;
   const { id } = req.params;
-  const Uid = req.headers.user_id;
+  // const Uid = req.headers.user_id;
 
   //   const { placeId } = req.place_id;
 
   db.findById(id)
     .then(place => {
       if (place) {
-        db.addStory(storyData, id, Uid).then(story => {
+        db.addStory(storyData, id ).then(story => {
           res.status(201).json(story);
         });
       } else {
