@@ -1,5 +1,5 @@
 const Users = require('./userModel');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const secrets = require('../../../config/secrets')
 const jwt = require("jsonwebtoken");
 
@@ -8,7 +8,7 @@ const router = require("express").Router();
 
  
 
-router.post('/register',dupeUsernameCheck,(req,res)=> {
+router.post('/register',(req,res)=> {
     let user = req.body;
     const hash = bcrypt.hashSync(user.password, 10)
     user.password = hash;
