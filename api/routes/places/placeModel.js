@@ -76,8 +76,8 @@ function updatePlace(id, obj, user_id) {
       
   }
 
-  async function addStory(story, place_id){
-      await db('stories').insert(story, place_id)
+  async function addStory(story, place_id,user_id){
+      await db('stories').insert(story, place_id,user_id)
   }
 
 
