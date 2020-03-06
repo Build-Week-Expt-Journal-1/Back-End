@@ -64,29 +64,43 @@ router.get("/:id", (req, res) => {
     .catch(err => ({ message: "Error finding the Place." }));
 });
 
-router.post("/:id/stories", (req, res) => {
-  const storyData = req.body;
-  const { id } = req.params;
-  // const Uid = req.headers.user_id;
+// router.post("/:id/stories", (req, res) => {
+//   const storyData = req.body;
+//   const { id } = req.params;
+//   // const Uid = req.headers.user_id;
 
-  //   const { placeId } = req.place_id;
+//   //   const { placeId } = req.place_id;
 
-  db.findById(id)
-    .then(place => {
-      if (place) {
-        db.addStory(storyData, id ).then(story => {
-          res.status(201).json(story);
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Could not find the place with given id." });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Error adding the Story." });
-    });
-});
+//   db.findById(id)
+//     .then(place => {
+//       if (place) {
+//         db.addStory(storyData, id ).then(story => {
+//           res.status(201).json(story);
+//         });
+//       } else {
+//         res
+//           .status(404)
+//           .json({ message: "Could not find the place with given id." });
+//       }
+//     })
+//     .catch(err => {
+//       res.status(500).json({ message: "Error adding the Story." });
+//     });
+// });
+
+
+router.post('/:id/stories',(req,res)=> {
+  const info = req.body;
+
+  db.addReview(info)
+  .then(rev=> {
+    res.status(201).json(rev[0])
+  })
+  .catch(err => {
+    res.status(500).json({ message: "Error adding item" });
+
+
+})
 
 router.get("/:id/stories", (req, res) => {
   const { id } = req.params;
@@ -190,4 +204,17 @@ router.delete("/:id/stories/:id", (req, res) => {
     });
 });
 
+
+function validateUserId(req, res, next) {
+  const id = req.body.user_id;
+  const user_id = req.headers.user_id;
+
+  id != user_id
+    ? res.status(400).json({
+        message: "Body key of user_id and header of user_id do not match"
+      })
+    : userDb.findBy({ id }).then(user => {
+        user ? next() : res.status(404).json({ message: "Invalid user ID" });
+      });
+}
 module.exports = router;
