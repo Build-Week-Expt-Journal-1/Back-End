@@ -101,6 +101,7 @@ router.post('/:id/stories',(req,res)=> {
 
 
 })
+})
 
 router.get("/:id/stories", (req, res) => {
   const { id } = req.params;
@@ -205,16 +206,5 @@ router.delete("/:id/stories/:id", (req, res) => {
 });
 
 
-function validateUserId(req, res, next) {
-  const id = req.body.user_id;
-  const user_id = req.headers.user_id;
-
-  id != user_id
-    ? res.status(400).json({
-        message: "Body key of user_id and header of user_id do not match"
-      })
-    : userDb.findBy({ id }).then(user => {
-        user ? next() : res.status(404).json({ message: "Invalid user ID" });
-      });
-}
+ 
 module.exports = router;
