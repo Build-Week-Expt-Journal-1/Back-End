@@ -6,7 +6,7 @@ const auth = require("../../auth-middleware");
 const router = require("express").Router();
 
 //This one gets ALL the Places.
-router.get("/all", auth, (req, res) => {
+router.get("/all",   (req, res) => {
   const id = req.header.user_id;
   // const { id } = req.params;
 
@@ -64,27 +64,22 @@ router.get("/:id", (req, res) => {
     .catch(err => ({ message: "Error finding the Place." }));
 });
 
-router.post("/:id/stories", (req, res) => {
-  const storyData = req.body;
-  const { id } = req.params;
-  //   const { placeId } = req.place_id;
+ 
 
-  db.findById(id)
-    .then(place => {
-      if (place) {
-        db.addStory(storyData, id).then(story => {
-          res.status(201).json(story);
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Could not find the place with given id." });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Error adding the Story." });
-    });
-});
+
+router.post('/:id/stories',(req,res)=> {
+  const info = req.body;
+
+  db.addReview(info)
+  .then(rev=> {
+    res.status(201).json(rev)
+  })
+  .catch(err => {
+    res.status(500).json({ message: "Error adding item" });
+
+
+})
+})
 
 router.get("/:id/stories", (req, res) => {
   const { id } = req.params;
@@ -134,7 +129,7 @@ router.delete("/:id", (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).json({ message: "Failed to delete user" });
+      res.status(500).json({ message: "Failed to delete place" });
     });
 });
 
@@ -188,4 +183,6 @@ router.delete("/:id/stories/:id", (req, res) => {
     });
 });
 
+
+ 
 module.exports = router;

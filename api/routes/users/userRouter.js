@@ -5,7 +5,15 @@ const jwt = require("jsonwebtoken");
 
 const router = require("express").Router();
 
-
+router.get('/all', (req,res)=> {
+  Users.getUsers()
+  .then(user=> {
+    res.status(200).json(user);
+})
+.catch(err=> {
+  res.status(500).json({message: 'error getting the users.'})
+});
+});
  
 
 router.post('/register',(req,res)=> {
@@ -33,8 +41,12 @@ router.post("/login", (req, res) => {
           const token = genToken(user);
   
           res.status(200).json({
-            message: `Welcome ${user.username}!`,
-            token: token
+            message: `Welcome ${user.username}! ${user.id}`,
+            user: {
+              'user_id': user.id,
+              'username': user.username, 
+              'token': token,
+            }
           });
         } else {
           res.status(401).json({ message: "Invalid Credentials" });
@@ -56,6 +68,24 @@ router.post("/login", (req, res) => {
     const token = jwt.sign(payload, secrets.jwtSecret, options);
   
     return token;
+  }
+
+
+  function dupeUsernameCheck(req, res, next) {
+    const { username } = req.body;
+    db.findBy({ username })
+      .then(user => {
+        if (user) {
+          res.status(409).json({ message: "Username already in use" });
+        } else {
+          next();
+        }
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ message: "Error checking for duplicate username" });
+      });
   }
   
   module.exports = router;

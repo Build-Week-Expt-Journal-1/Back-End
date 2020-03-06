@@ -5,6 +5,12 @@ function addPlace (place){
     .insert(place);
 }
 
+
+function addReview(info) {
+    return db("stories")
+      .returning(["id", ...Object.keys(info)])
+      .insert(info);
+  }
  
 function findById(id) {
     return db('places')
@@ -17,6 +23,9 @@ function findById(id) {
       .where({id})
       .first();
   }
+
+
+   
 
 function getAllPlaces (  ){
     return db('places') 
@@ -94,5 +103,6 @@ function updatePlace(id, obj, user_id) {
        updateStory,
        findStoryById,
        remove,
-       removeStory
+       removeStory,
+       addReview
   }
