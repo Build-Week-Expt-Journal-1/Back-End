@@ -7,7 +7,7 @@ function addPlace (place){
 
 
 function addReview(info) {
-    return db("items")
+    return db("stories")
       .returning(["id", ...Object.keys(info)])
       .insert(info);
   }

@@ -151,7 +151,7 @@ router.delete("/:id", (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).json({ message: "Failed to delete user" });
+      res.status(500).json({ message: "Failed to delete place" });
     });
 });
 
