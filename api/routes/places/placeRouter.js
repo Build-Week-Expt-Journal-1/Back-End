@@ -64,32 +64,10 @@ router.get("/:id", (req, res) => {
     .catch(err => ({ message: "Error finding the Place." }));
 });
 
-router.post("/:id/stories", (req, res) => {
-  const storyData = req.body;
-  const { id } = req.params;
-  // const Uid = req.headers.user_id;
-
-  //   const { placeId } = req.place_id;
-
-  db.findById(id)
-    .then(place => {
-      if (place) {
-        db.addStory(storyData, id ).then(story => {
-          res.status(201).json(story);
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Could not find the place with given id." });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Error adding the Story." });
-    });
-});
+ 
 
 
-router.post('/:id/stories1',(req,res)=> {
+router.post('/:id/stories',(req,res)=> {
   const info = req.body;
 
   db.addReview(info)
