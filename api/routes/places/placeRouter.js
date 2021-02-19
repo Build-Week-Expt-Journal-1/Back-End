@@ -71,7 +71,7 @@ router.post('/:id/stories',(req,res)=> {
   const info = req.body;
 
   db.addReview(info)
-  .then(rev=> {
+  .then(res=> {
     res.status(201).json(rev)
   })
   .catch(err => {
