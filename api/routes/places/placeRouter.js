@@ -67,7 +67,7 @@ router.get("/:id", (req, res) => {
  
 
 
-router.post('/:id/stories',(req,res)=> {
+router.post('/:id/stories/',(req,res)=> {
   const info = req.body;
 
   db.addReview(info)
